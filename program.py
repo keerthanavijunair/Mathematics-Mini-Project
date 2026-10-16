@@ -5,26 +5,30 @@ def gaussian_elimination(A, b):
     A = A.astype(float).copy()
     b = b.astype(float).copy()
 
-    n = len(b)
+    n = len(b) #stores number of equations in the system.
 
     for i in range(n):
         max_row = i + np.argmax(np.abs(A[i:, i]))
+        #finds the row with the largest absolute value in column i starting from current row (partial pivoting).
 
         if max_row != i:
             A[[i, max_row]] = A[[max_row, i]]
             b[[i, max_row]] = b[[max_row, i]]
+            #performs swapping if the best pivot is in another row.
 
         for j in range(i + 1, n):
             factor = A[j, i] / A[i, i]
+            #visits each row after pivot and calculate the multiplier used to eliminate the current column entry.
 
             A[j, i:] = A[j, i:] - factor * A[i, i:]
             b[j] = b[j] - factor * b[i]
+            #make elements below pivot as zero and apply the same for b.
 
     x = np.zeros(n)
 
-    for i in range(n - 1, -1, -1):
+    for i in range(n - 1, -1, -1): #back substitution
         x[i] = (
-            b[i] - np.dot(A[i, i + 1:], x[i + 1:])
+            b[i] - np.dot(A[i, i + 1:], x[i + 1:]) #np.dot computes the dot product
         ) / A[i, i]
 
     return x
@@ -52,11 +56,13 @@ def rref(A):
         A[pivot_row] = (
             A[pivot_row] / A[pivot_row, col]
         )
+        #making pivots equal to 1.
 
         for row in range(rows):
             if row != pivot_row:
                 factor = A[row, col]
                 A[row] = A[row] - factor * A[pivot_row]
+                #make all other entries in the pivot column zero.
 
         pivot_row += 1
 
@@ -91,7 +97,7 @@ def lu_decomposition(A):
     return L, U
 
 
-def forward_substitution(L, b):
+def forward_substitution(L, b): #solves lower trinagular system Ly=b.
     n = len(b)
 
     y = np.zeros(n)
@@ -104,7 +110,7 @@ def forward_substitution(L, b):
     return y
 
 
-def back_substitution(U, y):
+def back_substitution(U, y): #solves upper triangular system Ux=y.
     n = len(y)
 
     x = np.zeros(n)
@@ -117,7 +123,7 @@ def back_substitution(U, y):
     return x
 
 
-def lu_solve(A, b):
+def lu_solve(A, b): #solve Ax=b using LU decomposition.
     L, U = lu_decomposition(A)
 
     y = forward_substitution(L, b)
