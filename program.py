@@ -1,7 +1,9 @@
+#the code implements different methods for solving systems of linear equations using NumPy.
 import numpy as np
 
 
 def gaussian_elimination(A, b):
+    #converts A & b into floating point copies, later does back substitution to find x
     A = A.astype(float).copy()
     b = b.astype(float).copy()
 
@@ -35,6 +37,7 @@ def gaussian_elimination(A, b):
 
 
 def rref(A):
+    #converts the matrix into floating-point form, identifies its number of rows and columns
     A = A.astype(float).copy()
 
     rows, cols = A.shape
@@ -47,8 +50,8 @@ def rref(A):
         max_row = pivot_row + np.argmax(
             np.abs(A[pivot_row:, col])
         )
-
-        if abs(A[max_row, col]) < 1e-12:
+        #selects row with largest absolute pivot
+        if abs(A[max_row, col]) < 1e-12: #skips columns whose pivot smaller than 10^-12, swap if required
             continue
 
         A[[pivot_row, max_row]] = A[[max_row, pivot_row]]
@@ -77,6 +80,7 @@ def rref_solve(A, b):
 
 
 def lu_decomposition(A):
+    #factorizes A into L and U
     A = A.astype(float).copy()
 
     n = A.shape[0]
@@ -130,3 +134,5 @@ def lu_solve(A, b): #solve Ax=b using LU decomposition.
     x = back_substitution(U, y)
 
     return x, L, U
+
+
